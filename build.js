@@ -1,5 +1,5 @@
 import { rimraf } from "rimraf";
-import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { copyFile, cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { build } from "esbuild";
 import { execSync } from "node:child_process";
 
@@ -39,7 +39,7 @@ let builder = await build({
 				);
 
 				return hash;
-			} catch (e) {
+			} catch {
 				return "unknown";
 			}
 		})(),
@@ -53,3 +53,10 @@ let builder = await build({
 if (isDevelopment) {
 	await writeFile("metafile.json", JSON.stringify(builder.metafile));
 }
+
+// Include the browser app and its transport in the deployable output.
+await cp("public", "dist", { recursive: true });
+await mkdir("dist/baremux", { recursive: true });
+await mkdir("dist/epoxy", { recursive: true });
+await cp("node_modules/@mercuryworkshop/bare-mux/dist", "dist/baremux", { recursive: true });
+await cp("node_modules/@mercuryworkshop/epoxy-transport/dist", "dist/epoxy", { recursive: true });
