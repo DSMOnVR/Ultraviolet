@@ -10,7 +10,7 @@ const requestedAddress = new URLSearchParams(window.location.search).get('addres
 if (requestedAddress) address.value = requestedAddress;
 if (window.location.hash === '#connection-settings') {
   document.querySelector('#connection-settings').open = true;
-  status.textContent = 'Try another trusted Wisp relay, then select Browse to retry the website.';
+  status.textContent = 'Select Site connection to avoid relay failures, or enter a trusted Wisp relay, then retry.';
   relay.focus();
 }
 
@@ -79,10 +79,13 @@ form.addEventListener('submit', async (event) => {
     if (wisp.protocol !== 'wss:') throw new Error('Enter a secure Wisp relay URL starting with wss://.');
     if (wisp.username || wisp.password) throw new Error('Use a relay URL without credentials.');
     button.disabled = true;
-    status.textContent = 'Connecting to the relay…';
-    await checkRelay(wisp.href);
+    const useWisp = document.querySelector('#connection-mode').value === 'wisp';
+    if (useWisp) {
+      status.textContent = 'Connecting to the relay…';
+      await checkRelay(wisp.href);
+    }
     status.textContent = 'Preparing Ultraviolet…';
-    const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/service/' });
+    const registration = await navigator.serviceWorker.register('/sw.js', { scope: '/service/', updateViaCache: 'none' });
     await withTimeout(new Promise((resolve, reject) => {
       if (registration.active) return resolve();
       const worker = registration.installing || registration.waiting;
@@ -95,7 +98,7 @@ form.addEventListener('submit', async (event) => {
       update();
     }), 'The service worker did not start. Reload and try again.');
     const connection = new BareMux.BareMuxConnection('/baremux/worker.js');
-    await withTimeout(connection.setTransport('/epoxy/index.mjs', [{ wisp: wisp.href }]), 'The proxy transport did not start. Reload and try again.');
+    await withTimeout(connection.setTransport(useWisp ? '/epoxy/index.mjs' : '/site-transport.mjs', [{ wisp: wisp.href }]), 'The proxy transport did not start. Reload and try again.');
     status.textContent = 'Opening website…';
     window.location.assign(__uv$config.prefix + __uv$config.encodeUrl(target));
   } catch (error) {
