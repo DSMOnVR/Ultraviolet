@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#19151f">
+  <title>Ultraviolet — Browse beyond</title>
+  <link rel="stylesheet" href="/app.css">
+  <script src="/uv.bundle.js" defer></script>
+  <script src="/uv.config.js" defer></script>
+  <script src="/baremux/index.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header><a class="brand" href="/" aria-label="Ultraviolet home"><span class="symbol" aria-hidden="true">U<span>V</span></span> ULTRAVIOLET</a><span class="edition">SERVICE WORKER PROXY <span class="dot"></span></span></header>
+  <main>
+    <div class="eyebrow"><span>01 / EXPLORE</span><span>THE OPEN WEB</span></div>
+    <section class="intro">
+      <div><p class="kicker">A different wavelength.</p><h1>Browse<br><em>beyond.</em></h1></div>
+      <div class="orbit" aria-hidden="true"><div class="ring"></div><span>UV</span><small>380 — 10 nm</small></div>
+    </section>
+    <form id="browse-form">
+      <label for="address">Where do you want to go?</label>
+      <div class="address-bar"><span aria-hidden="true">↗</span><input id="address" name="address" placeholder="Search the web or enter a URL" autocomplete="off" spellcheck="false" required><button id="browse" type="submit">Browse <span aria-hidden="true">→</span></button></div>
+      <p id="status" role="status" aria-live="polite">Powered by Ultraviolet. Open a website to get started.</p>
+    </form>
+    <nav class="shortcuts" aria-label="Quick destinations"><span>QUICK LINKS</span><button type="button" data-url="https://www.wikipedia.org">Wikipedia ↗</button><button type="button" data-url="https://www.google.com">Google ↗</button><button type="button" data-url="https://www.youtube.com">YouTube ↗</button></nav>
+    <details><summary>Connection settings</summary><div class="settings"><label for="relay">Wisp relay URL</label><input id="relay" type="url" value="wss://wisp.mercurywork.shop/" spellcheck="false"><p>Browsing uses a third-party public relay. Its operator can access traffic passing through it. Use a relay you trust; availability and website compatibility vary. This is not a VPN.</p></div></details>
+  </main>
+  <footer><span>ULTRAVIOLET <span class="muted">/ 3.2.10</span></span><span>A new perspective on the web.</span></footer>
+</body>
+</html>

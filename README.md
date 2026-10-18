@@ -57,7 +57,13 @@ Changes are documented in the [changelog](./CHANGELOG.md).
 
 ## Deployment
 
-This repository can be built, but it can't be deployed to any services. See [Ultraviolet-App](https://github.com/titaniumnetwork-dev/Ultraviolet-App) for a complete and customizable Ultraviolet setup that you can deploy.
+This repository includes a browser interface and Netlify deployment configuration. Netlify builds the Ultraviolet bundles and publishes `dist`, including the service worker, bare-mux worker, and compatible Epoxy transport. Open the deployed HTTPS site, enter a URL or search, and select Browse.
+
+The proxy connects to `wss://wisp.mercurywork.shop/`, a third-party public testing relay. Netlify does not host the WebSocket relay. You can enter another secure Wisp endpoint in Connection settings before browsing. The relay must allow connections from your deployed site; public relay availability and individual website compatibility are not guaranteed. Only use a relay you trust. The setting applies to the current browsing session and is not saved by the app.
+
+Use a current browser with service worker, SharedWorker, and WebAssembly support. Cross-origin isolation headers are configured in `netlify.toml` for the transport. If a proxied link is opened without an active service worker, the site displays a recovery page linking back to the launcher.
+
+The added Epoxy transport is distributed under AGPL-3.0. Review that dependency's license when redistributing the application.
 
 ## Documentation
 
