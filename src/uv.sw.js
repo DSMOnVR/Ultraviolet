@@ -404,60 +404,45 @@ class HookEvent {
  * @returns
  */
 function errorTemplate(trace, fetchedURL) {
-	// turn script into a data URI so we don't have to escape any HTML values
+	const tlsFailure = /tls|ssl|handshake|certificate/i.test(trace);
+	// Keep URLs and diagnostic text out of HTML interpolation.
 	const script = `
-        errorTrace.value = ${JSON.stringify(trace)};
-        fetchedURL.textContent = ${JSON.stringify(fetchedURL)};
-        for (const node of document.querySelectorAll("#uvHostname")) node.textContent = ${JSON.stringify(
-					location.hostname
-				)};
-        reload.addEventListener("click", () => location.reload());
-        uvVersion.textContent = ${JSON.stringify(
-					process.env.ULTRAVIOLET_VERSION
-				)};
-        uvBuild.textContent = ${JSON.stringify(
-					process.env.ULTRAVIOLET_COMMIT_HASH
-				)};
+        document.querySelector("#errorTrace").textContent = ${JSON.stringify(trace)};
+        document.querySelector("#fetchedURL").textContent = ${JSON.stringify(fetchedURL || "the requested website")};
+        const recovery = new URL("/", location.origin);
+        recovery.searchParams.set("address", ${JSON.stringify(fetchedURL || "")});
+        recovery.hash = "connection-settings";
+        document.querySelector("#connection-settings").href = recovery.href;
+        document.querySelector("#reload").addEventListener("click", () => location.reload());
     `;
 
-	return `<!DOCTYPE html>
-        <html>
+	return `<!doctype html>
+        <html lang="en">
         <head>
-        <meta charset='utf-8' />
-        <title>Error</title>
-        <style>
-        * { background-color: white }
-        </style>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Connection failed — Ultraviolet</title>
+        <link rel="stylesheet" href="/app.css">
         </head>
         <body>
-        <h1 id='errorTitle'>Error processing your request</h1>
-        <hr />
-        <p>Failed to load <b id="fetchedURL"></b></p>
-        <p id="errorMessage">Internal Server Error</p>
-        <textarea id="errorTrace" cols="40" rows="10" readonly></textarea>
-        <p>Try:</p>
-        <ul>
-        <li>Checking your internet connection</li>
-        <li>Verifying you entered the correct address</li>
-        <li>Clearing the site data</li>
-        <li>Contacting <b id="uvHostname"></b>'s administrator</li>
-        <li>Verify the server isn't censored</li>
-        </ul>
-        <p>If you're the administrator of <b id="uvHostname"></b>, try:</p>
-        <ul>
-        <li>Restarting your server</li>
-        <li>Updating Ultraviolet</li>
-        <li>Troubleshooting the error on the <a href="https://github.com/titaniumnetwork-dev/Ultraviolet" target="_blank">GitHub repository</a></li>
-        </ul>
-        <button id="reload">Reload</button>
-        <hr />
-        <p><i>Ultraviolet v<span id="uvVersion"></span> (build <span id="uvBuild"></span>)</i></p>
-        <script src="${
-					"data:application/javascript," + encodeURIComponent(script)
-				}"></script>
+        <main class="connection-error">
+        <p class="kicker">ULTRAVIOLET / CONNECTION</p>
+        <h1>Connection<br><em>interrupted.</em></h1>
+        <p>Could not open <b id="fetchedURL"></b></p>
+        <p>${tlsFailure
+					? "The relay could not establish a secure connection to this website. The website may reject this relay or its TLS connection."
+					: "The proxy could not complete this request. The relay or destination website may be unavailable."}</p>
+        <p>Retry once. If it still fails, try another website or enter a trusted Wisp relay in Connection settings. A relay can connect successfully and still be unable to reach a particular website.</p>
+        <nav class="recovery-actions" aria-label="Connection recovery">
+        <button id="reload" type="button">Retry website</button>
+        <a id="connection-settings" href="/#connection-settings">Change relay</a>
+        <a href="/">Back to Ultraviolet</a>
+        </nav>
+        <details><summary>Technical details</summary><pre id="errorTrace"></pre></details>
+        </main>
+        <script src="${"data:application/javascript," + encodeURIComponent(script)}"></script>
         </body>
-        </html>
-        `;
+        </html>`;
 }
 
 /**

@@ -5,6 +5,15 @@ const button = document.querySelector('#browse');
 const status = document.querySelector('#status');
 const relay = document.querySelector('#relay');
 
+// A failed proxied navigation returns here without losing its destination.
+const requestedAddress = new URLSearchParams(window.location.search).get('address');
+if (requestedAddress) address.value = requestedAddress;
+if (window.location.hash === '#connection-settings') {
+  document.querySelector('#connection-settings').open = true;
+  status.textContent = 'Try another trusted Wisp relay, then select Browse to retry the website.';
+  relay.focus();
+}
+
 function destination(value) {
   const input = value.trim();
   if (!input) throw new Error('Enter a website address or search term.');
@@ -57,6 +66,7 @@ form.addEventListener('submit', async (event) => {
   event.preventDefault();
   if (button.disabled) return;
   status.classList.remove('error');
+  document.querySelector('#connection-help').hidden = true;
   try {
     const target = destination(address.value);
     if (!window.isSecureContext || !('serviceWorker' in navigator)) {
@@ -91,6 +101,7 @@ form.addEventListener('submit', async (event) => {
   } catch (error) {
     status.classList.add('error');
     status.textContent = error.message || 'The proxy could not start. Reload and try again.';
+    document.querySelector('#connection-help').hidden = false;
     button.disabled = false;
   }
 });

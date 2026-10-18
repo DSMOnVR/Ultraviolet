@@ -63,6 +63,8 @@ The proxy connects to `wss://wisp.mercurywork.shop/`, a third-party public testi
 
 Use a current browser with service worker, SharedWorker, and WebAssembly support. Cross-origin isolation headers are configured in `netlify.toml` for the transport. If a proxied link is opened without an active service worker, the site displays a recovery page linking back to the launcher.
 
+If a website fails with a TLS handshake error, the relay could not establish a secure connection to that destination. A successful relay WebSocket check does not guarantee access to every website. Use Retry website for a temporary failure, or Change relay to return to Connection settings with the destination preserved. TikTok was observed rejecting connections through the default public relay; changing the interface or restarting the static site does not resolve that external connection failure.
+
 The added Epoxy transport is distributed under AGPL-3.0. Review that dependency's license when redistributing the application.
 
 ## Documentation
