@@ -432,7 +432,7 @@ function errorTemplate(trace, fetchedURL) {
         <p>${tlsFailure
 					? "The relay could not establish a secure connection to this website. The website may reject this relay or its TLS connection."
 					: "The proxy could not complete this request. The relay or destination website may be unavailable."}</p>
-        <p>Retry once. If it still fails, try another website or enter a trusted Wisp relay in Connection settings. A relay can connect successfully and still be unable to reach a particular website.</p>
+        <p>Retry once. If it still fails, select Site connection in Connection settings, or enter a trusted Wisp relay. A relay can connect successfully and still be unable to reach a particular website.</p>
         <nav class="recovery-actions" aria-label="Connection recovery">
         <button id="reload" type="button">Retry website</button>
         <a id="connection-settings" href="/#connection-settings">Change relay</a>
